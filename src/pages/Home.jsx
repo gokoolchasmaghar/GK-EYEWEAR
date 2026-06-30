@@ -1,45 +1,19 @@
-// import Navbar from "../components/common/Navbar";
-// import Hero from "../components/home/Hero";
-// import ProductSection from "../components/home/ProductSection";
-
-// function Home() {
-//   return (
-//     <>
-//       <Navbar />
-//       <Hero />
-//       <ProductSection />
-//     </>
-//   );
-// }
-
-// export default Home;
-// import AnnouncementBar from "../components/common/AnnouncementBar";
-// import Navbar from "../components/common/Navbar";
-
-// function Home() {
-//   return (
-//     <>
-//       <AnnouncementBar />
-//       <Navbar />
-//     </>
-//   );
-// }
-
-// export default Home;
-import AnnouncementBar from "../components/common/AnnouncementBar";
-import Navbar from "../components/common/Navbar";
-import MegaMenu from "../components/common/MegaMenu";
-import CollectionHeader from "../components/collection/CollectionHeader";
-import ProductGrid from "../components/collection/ProductGrid";
+import HeroSection from '../components/common/home/HeroSection';
+import NewArrivalsSection from '../components/common/home/NewArrivalsSection';
+import TataCliqMyntraSection from '../components/common/home/TataCliqMyntraSection';
+import CustomerReviewsSection from '../components/common/home/CustomerReviewsSection';
+import BrandBannerSection from '../components/common/home/BrandBannerSection';
+import BlogPostsSection from '../components/common/home/BlogPostsSection';
 
 function Home() {
   return (
     <>
-      <AnnouncementBar />
-      <Navbar />
-      <MegaMenu />
-      <CollectionHeader />
-      <ProductGrid />
+      <HeroSection />
+      <NewArrivalsSection />
+      <TataCliqMyntraSection />
+      <CustomerReviewsSection />
+      <BrandBannerSection />
+      <BlogPostsSection />
     </>
   );
 }

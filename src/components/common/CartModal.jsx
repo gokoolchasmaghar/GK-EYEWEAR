@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { X, Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 
@@ -75,6 +76,15 @@ function CartModal({ isOpen, onClose }) {
               <span>Subtotal</span>
               <span>RS. {cartTotal.toLocaleString()}</span>
             </div>
+
+            <Link
+              to="/cart"
+              onClick={onClose}
+              className="block text-center border border-[#0f1c3f] text-[#0f1c3f] py-3 text-sm font-medium tracking-wide hover:bg-gray-50 transition-colors mb-3"
+            >
+              VIEW CART
+            </Link>
+
             <button className="w-full bg-[#0f1c3f] text-white py-3 text-sm font-medium tracking-wide hover:bg-[#1a2a5a] transition-colors">
               CHECKOUT
             </button>

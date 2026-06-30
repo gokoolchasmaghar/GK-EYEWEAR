@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { User, Search, ShoppingBag, Menu, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { User, Search, ShoppingBag, Heart, Menu, X } from "lucide-react";
 import MegaMenu from "./MegaMenu";
 import AuthDropdown from "./AuthDropdown";
 import SearchBar from "./SearchBar";
 import CartModal from "./CartModal";
 import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
 
 const menuItems = [
   "META AI GLASSES",
@@ -27,6 +29,8 @@ function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
+  const navigate = useNavigate();
 
   const handleMenuClick = (item) => {
     setActiveMenu(activeMenu === item ? null : item);
@@ -38,9 +42,15 @@ function Navbar() {
     setIsSearchOpen(false);
   };
 
+  const handleMenuItemNavigate = (item) => {
+    const slug = item.toLowerCase().replace(/\s+/g, "-");
+    navigate(`/collections/${slug}`);
+    closeAllPopups();
+  };
+
   return (
     <header className="bg-[#0f1c3f] text-white relative">
-      {/* Top Row */}
+      {/* Top row: Logo + Icons */}
       <div className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto relative">
         <button
           className="md:hidden"
@@ -49,9 +59,13 @@ function Navbar() {
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-[0.2em] mx-auto md:mx-0">
+        <Link
+          to="/"
+          onClick={closeAllPopups}
+          className="text-2xl md:text-3xl font-semibold tracking-[0.2em] mx-auto md:mx-0"
+        >
           OPTORIUM
-        </h1>
+        </Link>
 
         <div className="hidden md:flex items-center gap-5 relative">
           {/* Account */}
@@ -66,11 +80,7 @@ function Navbar() {
             >
               <User size={20} />
             </button>
-
-            <AuthDropdown
-              isOpen={isAuthOpen}
-              onClose={() => setIsAuthOpen(false)}
-            />
+            <AuthDropdown isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
           </div>
 
           {/* Search */}
@@ -85,6 +95,16 @@ function Navbar() {
             <Search size={20} />
           </button>
 
+          {/* Wishlist */}
+          <Link to="/wishlist" onClick={closeAllPopups} className="relative" aria-label="Wishlist">
+            <Heart size={20} />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-orange-400 text-[#0f1c3f] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
+
           {/* Cart */}
           <button
             aria-label="Cart"
@@ -95,7 +115,6 @@ function Navbar() {
             }}
           >
             <ShoppingBag size={20} />
-
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-400 text-[#0f1c3f] text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                 {cartCount}
@@ -105,7 +124,7 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Desktop Navigation */}
+      {/* Bottom row: Menu items (desktop only) */}
       <nav className="hidden md:flex items-center justify-center gap-8 border-t border-white/10 py-3 text-sm font-medium tracking-wide">
         {menuItems.map((item) => (
           <button
@@ -115,6 +134,7 @@ function Navbar() {
               setIsAuthOpen(false);
               setIsSearchOpen(false);
             }}
+            onDoubleClick={() => handleMenuItemNavigate(item)}
             className={`hover:text-orange-400 transition-colors ${
               item === "SALE" ? "text-orange-400" : ""
             } ${activeMenu === item ? "text-orange-400" : ""}`}
@@ -124,38 +144,35 @@ function Navbar() {
         ))}
       </nav>
 
-      {/* Mega Menu */}
-      <MegaMenu activeMenu={activeMenu} />
+      {/* MegaMenu dropdown */}
+      <MegaMenu activeMenu={activeMenu} onClose={closeAllPopups} />
 
-      {/* Search */}
+      {/* Search bar */}
       {isSearchOpen && (
         <div className="absolute top-full left-0 w-full z-30">
-          <SearchBar
-            isOpen={isSearchOpen}
-            onClose={() => setIsSearchOpen(false)}
-          />
+          <SearchBar isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         </div>
       )}
 
-      {/* Cart */}
-      <CartModal
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-      />
+      {/* Cart modal */}
+      <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
-      {/* Mobile Menu */}
+      {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
         <nav className="md:hidden flex flex-col gap-4 px-6 py-4 border-t border-white/10 text-sm font-medium">
           {menuItems.map((item) => (
-            <a
+            <button
               key={item}
-              href="#"
-              className={`hover:text-orange-400 transition-colors ${
+              onClick={() => {
+                handleMenuItemNavigate(item);
+                setMobileMenuOpen(false);
+              }}
+              className={`text-left hover:text-orange-400 transition-colors ${
                 item === "SALE" ? "text-orange-400" : ""
               }`}
             >
               {item}
-            </a>
+            </button>
           ))}
         </nav>
       )}
@@ -164,4 +181,7 @@ function Navbar() {
 }
 
 export default Navbar;
+
+
+
 
