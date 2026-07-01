@@ -165,12 +165,13 @@ function AuthDropdown({ isOpen, onClose }) {
             Profile
           </Link>
 
-          <a
-            href="#"
-            className="block py-3 text-sm hover:text-gray-600"
-          >
-            Track your Order
-          </a>
+          <Link
+  to="/track-order"
+  onClick={onClose}
+  className="block py-3 text-sm hover:text-gray-600"
+>
+  Track your Order
+</Link>
         </div>
       </div>
     </>
