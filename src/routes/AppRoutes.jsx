@@ -13,8 +13,10 @@ import NotFound from '../pages/NotFound';
 import AdminLogin from '../pages/AdminLogin';
 import AdminDashboard from '../pages/AdminDashboard';
 import AdminProducts from '../pages/AdminProducts';
-import AdminLayout from '../layouts/AdminLayout';
 import AdminOrders from '../pages/AdminOrders';
+import AdminUsers from '../pages/AdminUsers';
+import AdminCategories from '../pages/AdminCategories';
+import AdminLayout from '../layouts/AdminLayout';
 
 function AppRoutes() {
   return (
@@ -33,33 +35,11 @@ function AppRoutes() {
 
       {/* Admin routes */}
       <Route path="/admin/login" element={<AdminLogin />} />
-
-      <Route
-        path="/admin"
-        element={
-          <AdminLayout>
-            <AdminDashboard />
-          </AdminLayout>
-        }
-      />
-
-      <Route
-        path="/admin/products"
-        element={
-          <AdminLayout>
-            <AdminProducts />
-          </AdminLayout>
-        }
-      />
-
-      <Route
-        path="/admin/orders"
-        element={
-          <AdminLayout>
-            <AdminOrders />
-          </AdminLayout>
-        }
-      />
+      <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+      <Route path="/admin/products" element={<AdminLayout><AdminProducts /></AdminLayout>} />
+      <Route path="/admin/orders" element={<AdminLayout><AdminOrders /></AdminLayout>} />
+      <Route path="/admin/users" element={<AdminLayout><AdminUsers /></AdminLayout>} />
+      <Route path="/admin/categories" element={<AdminLayout><AdminCategories /></AdminLayout>} />
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
