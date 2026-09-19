@@ -1,11 +1,12 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, Truck, RotateCcw, CreditCard, Globe, Share2, Plus, Minus, ChevronUp, Heart } from "lucide-react";
 import { newArrivals, tataCliqMyntra } from "../data/products";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import ProductCard from "../components/common/home/ProductCard";
 import CustomerReviewsSection from "../components/common/home/CustomerReviewsSection";
+import Spinner from "../components/common/Spinner";
 
 const DEFAULT_DESCRIPTION =
   "Premium quality eyewear crafted with precision. Features durable frame construction and UV-protected lenses for everyday comfort and style. Designed to deliver both fashion and function, this piece is a versatile addition to any collection.";
@@ -25,7 +26,11 @@ function CollapsibleSection({ title, children, icon: Icon }) {
         </span>
         {isOpen ? <ChevronUp size={18} /> : <Plus size={18} />}
       </button>
-      {isOpen && <div className="pb-4 text-sm text-gray-600 leading-relaxed">{children}</div>}
+      {isOpen && (
+        <div className="pb-4 text-sm text-gray-600 leading-relaxed">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
@@ -36,9 +41,18 @@ function ProductDetails() {
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("53");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, [id]);
 
   const allProducts = [...newArrivals, ...tataCliqMyntra];
   const product = allProducts.find((p) => p.id === Number(id));
+
+  if (loading) return <Spinner fullPage />;
 
   if (!product) {
     return (
@@ -49,7 +63,9 @@ function ProductDetails() {
   }
 
   const isWishlisted = isInWishlist(product.id);
-  const relatedProducts = allProducts.filter((p) => p.id !== product.id).slice(0, 4);
+  const relatedProducts = allProducts
+    .filter((p) => p.id !== product.id)
+    .slice(0, 4);
 
   return (
     <div>
@@ -75,7 +91,9 @@ function ProductDetails() {
             <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">
               {product.brand}
             </p>
-            <h1 className="text-2xl md:text-3xl font-light mb-4">{product.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-light mb-4">
+              {product.name}
+            </h1>
 
             <div className="flex items-center gap-3 mb-2">
               <span className="text-xl font-semibold">
@@ -88,18 +106,28 @@ function ProductDetails() {
               )}
             </div>
             <p className="text-xs text-gray-500 mb-4">
-              Tax included. <span className="underline cursor-pointer">Shipping calculated</span> at checkout
+              Tax included.{" "}
+              <span className="underline cursor-pointer">
+                Shipping calculated
+              </span>{" "}
+              at checkout
             </p>
 
+            {/* Rating */}
             <div className="flex items-center gap-2 mb-6">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} size={18} className="fill-[#8a5a2e] text-[#8a5a2e]" />
+                  <Star
+                    key={star}
+                    size={18}
+                    className="fill-[#8a5a2e] text-[#8a5a2e]"
+                  />
                 ))}
               </div>
               <span className="text-sm text-gray-600">5.0 Reviews</span>
             </div>
 
+            {/* Info icons */}
             <div className="space-y-3 mb-6 border-t border-gray-200 pt-5">
               <div className="flex items-center gap-3 text-sm text-gray-700">
                 <Truck size={18} />
@@ -120,6 +148,7 @@ function ProductDetails() {
             </div>
 
             <div className="border-t border-gray-200 pt-6">
+              {/* Size */}
               <p className="text-sm font-medium mb-2">Size:</p>
               <div className="flex gap-2 mb-6">
                 {["53", "53/M"].map((size) => (
@@ -137,6 +166,7 @@ function ProductDetails() {
                 ))}
               </div>
 
+              {/* Color */}
               <p className="text-sm font-medium mb-2">Color:</p>
               <div className="mb-6">
                 <button className="px-4 py-2 border border-gray-900 bg-gray-900 text-white text-sm">
@@ -144,6 +174,7 @@ function ProductDetails() {
                 </button>
               </div>
 
+              {/* Quantity */}
               <div className="flex items-center gap-4 mb-6">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -160,6 +191,7 @@ function ProductDetails() {
                 </button>
               </div>
 
+              {/* Buttons */}
               <div className="flex gap-3 mb-3">
                 <button
                   onClick={() => addToCart({ ...product, quantity })}
@@ -174,7 +206,11 @@ function ProductDetails() {
                 >
                   <Heart
                     size={20}
-                    className={isWishlisted ? "fill-red-500 text-red-500" : "text-gray-700"}
+                    className={
+                      isWishlisted
+                        ? "fill-red-500 text-red-500"
+                        : "text-gray-700"
+                    }
                   />
                 </button>
               </div>
@@ -184,22 +220,28 @@ function ProductDetails() {
               </button>
             </div>
 
+            {/* Collapsible sections */}
             <div className="mt-8">
               <CollapsibleSection title="DESCRIPTION">
                 {product.description || DEFAULT_DESCRIPTION}
               </CollapsibleSection>
               <CollapsibleSection title="BRAND AUTHENTICITY & WARRANTY">
-                All products are 100% authentic, sourced directly from authorized brand distributors. Warranty as per manufacturer terms.
+                All products are 100% authentic, sourced directly from
+                authorized brand distributors. Warranty as per manufacturer
+                terms.
               </CollapsibleSection>
               <CollapsibleSection title="SHIPPING & REPLACEMENT">
-                Free shipping across India. Replacement available within 7 days of delivery for manufacturing defects.
+                Free shipping across India. Replacement available within 7
+                days of delivery for manufacturing defects.
               </CollapsibleSection>
             </div>
           </div>
         </div>
 
+        {/* Thin divider line */}
         <hr className="border-t border-gray-200 mt-16" />
 
+        {/* Related products */}
         <div className="mt-16">
           <h2 className="text-center text-3xl md:text-4xl font-light tracking-wide mb-12">
             YOU MAY ALSO LIKE
@@ -217,6 +259,7 @@ function ProductDetails() {
         </div>
       </div>
 
+      {/* Customer Reviews Section */}
       <CustomerReviewsSection />
     </div>
   );

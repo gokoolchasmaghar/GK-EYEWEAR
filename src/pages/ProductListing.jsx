@@ -1,8 +1,9 @@
 import { useParams } from 'react-router-dom';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { newArrivals, tataCliqMyntra } from '../data/products';
 import ProductCard from '../components/common/home/ProductCard';
+import Spinner from '../components/common/Spinner';
 
 function FilterSection({ title, children }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -27,10 +28,17 @@ function FilterSection({ title, children }) {
 function ProductListing() {
   const { category } = useParams();
   const allProducts = [...newArrivals, ...tataCliqMyntra];
-
+  const [loading, setLoading] = useState(true);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [maxPrice, setMaxPrice] = useState(150000);
   const [sortBy, setSortBy] = useState("default");
+
+  // Simulate loading (backend ke baad real API call hogi)
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, [category]);
 
   const allBrands = [...new Set(allProducts.map((p) => p.brand))];
 
@@ -42,17 +50,14 @@ function ProductListing() {
 
   const filteredProducts = useMemo(() => {
     let result = allProducts.filter((p) => p.price <= maxPrice);
-
     if (selectedBrands.length > 0) {
       result = result.filter((p) => selectedBrands.includes(p.brand));
     }
-
     if (sortBy === "price-low") {
       result = [...result].sort((a, b) => a.price - b.price);
     } else if (sortBy === "price-high") {
       result = [...result].sort((a, b) => b.price - a.price);
     }
-
     return result;
   }, [allProducts, selectedBrands, maxPrice, sortBy]);
 
@@ -66,7 +71,6 @@ function ProductListing() {
 
       <div className="flex items-center justify-between mb-8 border-b border-gray-200 pb-4">
         <p className="text-gray-500 text-sm">{filteredProducts.length} PRODUCTS</p>
-
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
@@ -115,7 +119,9 @@ function ProductListing() {
 
         {/* Product Grid */}
         <div className="md:col-span-3">
-          {filteredProducts.length === 0 ? (
+          {loading ? (
+            <Spinner />
+          ) : filteredProducts.length === 0 ? (
             <p className="text-gray-500 text-center py-16">
               No products match the selected filters.
             </p>
